@@ -11,7 +11,7 @@
   "features": {
     "autoReconnect": {
       "enabled": true,
-      "delay": 50000,
+      "delay": 5000,
       "kickDelay": 10000
     },
     "randomUsernameOnKick": {
