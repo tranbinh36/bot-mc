@@ -1,0 +1,44 @@
+body {
+  background-color: #e9ecef;
+  color: #343a40;
+}
+.navbar {
+  margin-bottom: 20px;
+}
+.card {
+  margin-bottom: 20px;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+}
+.card-header {
+  background-color: #343a40;
+  color: white;
+  font-weight: bold;
+}
+.status-badge {
+  font-size: 1.1em;
+  padding: .5em .75em;
+  border-radius: .25rem;
+}
+.status-badge.online {
+  background-color: #28a745; /* Green */
+  color: white;
+}
+.status-badge.offline {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+.status-badge.loading {
+  background-color: #ffc107; /* Yellow */
+  color: #343a40;
+}
+.chat-input-group {
+  display: flex;
+}
+.chat-input-group input {
+  flex-grow: 1;
+  margin-right: 5px;
+}
+.btn-action {
+  margin: 5px;
+}

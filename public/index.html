@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển Bot Minecraft</title>
+    <link rel="icon" href="https://img.icons8.com/plasticine/100/minecraft-cube.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #2c3e50;
+            --secondary-bg: #34495e;
+            --text-color: #ecf0f1;
+            --accent-color: #f39c12; /* Orange for titles */
+            --button-color: #3498db; /* Blue button */
+            --button-hover-color: #2980b9;
+            --button-disabled-color: #7f8c8d;
+            --online-color: #2ecc71; /* Green */
+            --offline-color: #e74c3c; /* Red */
+            --info-log-color: #2ecc71;
+            --warn-log-color: #f39c12;
+            --error-log-color: #e74c3c;
+            --youtube-red: #e74c3c;
+            --youtube-red-hover: #c0392b;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: var(--secondary-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #4a6c8e;
+        }
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .section-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 0.5rem;
+            text-align: center;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .status-item {
+            background-color: var(--primary-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .status-item strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-color);
+        }
+        .status-item span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--button-color);
+        }
+        .status-online {
+            color: var(--online-color);
+        }
+        .status-offline {
+            color: var(--offline-color);
+        }
+        .controls, .chat-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            justify-content: center;
+        }
+        .controls button, .chat-section button, .chat-section input {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+        .controls button:hover, .chat-section button:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
+        }
+        .controls button:active, .chat-section button:active {
+            transform: translateY(0);
+        }
+        .controls button:disabled, .chat-section button:disabled {
+            background-color: var(--button-disabled-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .chat-section input {
+            flex-grow: 1;
+            padding: 0.625rem;
+            border-radius: 8px;
+            border: 1px solid #5a7d9b;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            min-width: 150px; /* Adjusted min-width for smaller screens */
+        }
+        .logs-section {
+            background-color: var(--primary-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #4a6c8e;
+            width: 100%;
+            box-sizing: border-box;
+            color: #bdc3c7;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        .log-entry {
+            margin-bottom: 0.3rem;
+            padding: 0.125rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .log-entry.info { color: var(--info-log-color); }
+        .log-entry.warn { color: var(--warn-log-color); }
+        .log-entry.error { color: var(--error-log-color); }
+
+        /* Tabs Styling */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .tab-button {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid #4a6c8e;
+            border-bottom: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0 5px;
+        }
+        .tab-button.active {
+            background-color: var(--button-color);
+            color: white;
+            border-color: var(--button-color);
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #4a6c8e;
+        }
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Guide Tab Specific Styles */
+        .guide-content ul {
+            list-style: disc;
+            margin-left: 20px;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        .guide-content ul li {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        .guide-content .youtube-embed {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .guide-content .youtube-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .guide-content .youtube-link-button {
+            background-color: var(--youtube-red);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .guide-content .youtube-link-button:hover {
+            background-color: var(--youtube-red-hover);
+        }
+
+
+        /* Subscription Modal Styling */
+        #subscriptionModalOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000; /* Higher z-index than message box */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #subscriptionModalOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #subscriptionModal {
+            background-color: var(--secondary-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(-30px);
+            transition: transform 0.3s ease;
+            border: 2px solid var(--accent-color);
+        }
+        #subscriptionModalOverlay.hidden #subscriptionModal {
+            transform: translateY(0); /* Reset transform when hidden */
+        }
+        #subscriptionModal h2 {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        #subscriptionModal p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        #subscriptionModal a.youtube-link-button { /* Reusing button style */
+            background-color: var(--youtube-red);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        #subscriptionModal a.youtube-link-button:hover {
+            background-color: var(--youtube-red-hover);
+        }
+        #subscriptionModal button {
+            background-color: var(--online-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        #subscriptionModal button:hover:not(:disabled) {
+            background-color: #27ae60;
+        }
+        #subscriptionModal button:disabled {
+            background-color: var(--button-disabled-color);
+            cursor: not-allowed;
+        }
+
+        /* Message Box Styling (keep as is, but ensure z-index is lower than modal) */
+        #messageBoxOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Lower than subscriptionModalOverlay */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #messageBoxOverlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        #messageBox {
+            background-color: var(--secondary-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        #messageBoxOverlay.show #messageBox {
+            transform: translateY(0);
+        }
+        #messageBox p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        #messageBox button {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        #messageBox button:hover {
+            background-color: var(--button-hover-color);
+        }
+        #messageBox.success { border: 2px solid var(--online-color); }
+        #messageBox.error { border: 2px solid var(--error-log-color); }
+        #messageBox.info { border: 2px solid var(--button-color); }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container, .main-wrapper {
+                padding: 1.25rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .status-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Smaller min-width for mobile */
+            }
+            .status-item {
+                padding: 0.75rem;
+            }
+            .status-item strong {
+                font-size: 1rem;
+            }
+            .status-item span {
+                font-size: 1.1rem;
+            }
+            .controls button, .chat-section button, .chat-section input {
+                padding: 0.625rem 1rem;
+                font-size: 0.95rem;
+            }
+            .chat-section {
+                flex-direction: column; /* Stack input and button on small screens */
+                align-items: stretch;
+            }
+            .chat-section input {
+                margin-bottom: 0.75rem; /* Add space between input and button */
+                min-width: unset; /* Remove min-width to allow full width */
+            }
+            .tab-button {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            #subscriptionModal {
+                padding: 1.5rem;
+            }
+            #subscriptionModal h2 {
+                font-size: 1.5rem;
+            }
+            #subscriptionModal p {
+                font-size: 1.1rem;
+            }
+            #subscriptionModal a.youtube-link-button, #subscriptionModal button {
+                font-size: 1.1rem;
+                padding: 0.7rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container, .main-wrapper {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .section-title {
+                font-size: 1.2rem;
+            }
+            .status-grid {
+                grid-template-columns: 1fr; /* Single column on very small screens */
+            }
+            .logs-section {
+                font-size: 0.85rem;
+                padding: 1rem;
+            }
+            .guide-content ul {
+                margin-left: 10px;
+            }
+            .guide-content ul li {
+                font-size: 0.9rem;
+            }
+            .guide-content .youtube-link-button {
+                font-size: 1rem;
+                padding: 0.6rem 1rem;
+            }
+            #subscriptionModal {
+                padding: 1rem;
+            }
+            #subscriptionModal h2 {
+                font-size: 1.3rem;
+            }
+            #subscriptionModal p {
+                font-size: 1rem;
+            }
+            #subscriptionModal a.youtube-link-button, #subscriptionModal button {
+                font-size: 1rem;
+                padding: 0.6rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Subscription Modal Overlay - Hiện ra đầu tiên -->
+    <div id="subscriptionModalOverlay">
+        <div id="subscriptionModal">
+            <h2>Cảm ơn bạn đã ghé thăm Bảng điều khiển Bot Minecraft!</h2>
+            <p>Sự ủng hộ của bạn là động lực lớn để tôi tiếp tục phát triển dự án này. Nếu bạn yêu thích bot của tôi, bạn có thể cân nhắc ủng hộ nhà phát triển qua kênh YouTube của tôi nhé!</p>
+            <a href="https://youtube.com/@Pokesinytbe?si=m5yF-0L8m7f2Rk00" target="_blank" id="modalYoutubeLink" class="youtube-link-button">
+                Ghé thăm kênh YouTube của tôi!
+            </a>
+            <button id="modalUnlockButton">Tiếp tục vào bảng điều khiển</button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content - Bị ẩn cho đến khi mở khóa -->
+    <div class="main-wrapper" id="mainDashboardWrapper">
+        <h1>Bảng điều khiển Bot Minecraft</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="botDashboard">Bảng điều khiển Bot</button>
+            <button class="tab-button" data-tab="guide">Hướng dẫn & Lưu ý</button>
+        </div>
+
+        <div id="botDashboard" class="tab-content active container">
+            <div class="section-title">Trạng thái Bot</div>
+            <div class="status-grid">
+                <div class="status-item">
+                    <strong>Trạng thái</strong>
+                    <span id="botStatus" class="status-offline">Chưa Khởi Động</span>
+                </div>
+                <div class="status-item">
+                    <strong>Người dùng</strong>
+                    <span id="botUsername">N/A</span>
+                </div>
+                <div class="status-item">
+                    <strong>HP</strong>
+                    <span id="botHealth">0 / 20</span>
+                </div>
+                <div class="status-item">
+                    <strong>Đói</strong>
+                    <span id="botFood">0 / 20</span>
+                </div>
+                <div class="status-item">
+                    <strong>Vị trí</strong>
+                    <span id="botPosition">X: 0 Y: 0 Z: 0</span>
+                </div>
+                <div class="status-item">
+                    <strong>Người chơi</strong>
+                    <span id="botPlayers">0</span>
+                </div>
+                <div class="status-item">
+                    <strong>Thời gian hoạt động</strong>
+                    <span id="botUptime">0h 0m 0s</span>
+                </div>
+            </div>
+
+            <div class="section-title">Điều khiển Bot</div>
+            <div class="controls">
+                <button id="startButton" disabled>Khởi động Bot</button>
+                <button id="reconnectButton" disabled>Kết nối lại</button>
+                <button id="stopButton" disabled>Dừng Bot</button>
+            </div>
+
+            <div class="section-title">Trò chuyện</div>
+            <div class="chat-section">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." disabled>
+                <button id="sendChatButton" disabled>Gửi Chat</button>
+            </div>
+        </div>
+        
+        <div id="guide" class="tab-content container">
+            <div class="section-title">Hướng dẫn & Lưu ý quan trọng</div>
+            <div class="guide-content">
+                <p>Để bot hoạt động hiệu quả trên server Minecraft của bạn, vui lòng lưu ý các điều sau:</p>
+                <ul>
+                    <li><strong>Chế độ Offline (Cracked):</strong> Hầu hết các server Minecraft bot hoạt động tốt nhất là các server cho phép chế độ offline (thường được gọi là server "cracked"). Đảm bảo server của bạn đã cài đặt <code>online-mode=false</code> trong file <code>server.properties</code>.</li>
+                    <li><strong>Phiên bản Minecraft:</strong> Bot được cấu hình để kết nối với phiên bản Minecraft cụ thể (xem trong <code>config.json</code>). Nếu server của bạn sử dụng phiên bản khác, bot có thể không kết nối được.</li>
+                    <li><strong>Không hỗ trợ server Fabric/Forge (mặc định):</strong> Bot này được xây dựng trên Mineflayer và không hỗ trợ các server có mod loader như Fabric hoặc Forge một cách mặc định. Nếu server của bạn có mod, bot có thể gặp lỗi khi kết nối hoặc hoạt động.</li>
+                    <li><strong>Tường lửa & Cổng:</strong> Đảm bảo cổng của server Minecraft của bạn được mở và không bị chặn bởi tường lửa.</li>
+                    <li><strong>Tên người dùng:</strong> Bot sẽ tự động thay đổi tên người dùng khi bị kick để tránh bị cấm. Bạn có thể cấu hình tên cơ sở trong <code>config.json</code>.</li>
+                    <li><strong>Giới hạn AFK:</strong> Một số server có hệ thống anti-AFK rất nghiêm ngặt. Mặc dù bot có các hành động AFK, nhưng không thể đảm bảo 100% không bị kick trên mọi server.</li>
+                </ul>
+
+                <p>Xem video hướng dẫn chi tiết dưới đây để hiểu rõ hơn về cách thiết lập và sử dụng bot:</p>
+                <div class="youtube-embed">
+                    <!-- Thay thế YOUR_VIDEO_ID bằng ID video YouTube của bạn -->
+                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p style="text-align: center; margin-top: 1rem;">
+                    <a href="https://youtube.com/@Pokesinytbe?si=m5yF-0L8m7f2Rk00" target="_blank" class="youtube-link-button">
+                        Truy cập kênh YouTube của tôi để xem thêm hướng dẫn!
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="section-title">Nhật ký Bot</div>
+            <div class="logs-section" id="logs">
+                <!-- Logs will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="messageBoxOverlay">
+        <div id="messageBox">
+            <p id="messageBoxText"></p>
+            <button id="messageBoxCloseButton">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.origin;
+        const LINK_CLICK_DELAY = 1500; // Thời gian chờ để kích hoạt nút "Tiếp tục vào bảng điều khiển" (1.5 giây)
+
+        // Elements for the main dashboard
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const startButton = document.getElementById('startButton');
+        const reconnectButton = document.getElementById('reconnectButton');
+        const stopButton = document.getElementById('stopButton');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatButton = document.getElementById('sendChatButton');
+        const logsContainer = document.getElementById('logs');
+        const botStatusSpan = document.getElementById('botStatus');
+        const mainDashboardWrapper = document.getElementById('mainDashboardWrapper');
+
+        const statusElements = {
+            botStatus: document.getElementById('botStatus'),
+            botUsername: document.getElementById('botUsername'),
+            botHealth: document.getElementById('botHealth'),
+            botFood: document.getElementById('botFood'),
+            botPosition: document.getElementById('botPosition'),
+            botPlayers: document.getElementById('botPlayers'),
+            botUptime: document.getElementById('botUptime'),
+        };
+
+        // Elements for the subscription modal
+        const subscriptionModalOverlay = document.getElementById('subscriptionModalOverlay');
+        const modalYoutubeLink = document.getElementById('modalYoutubeLink');
+        const modalUnlockButton = document.getElementById('modalUnlockButton');
+
+        // Elements for the custom message box
+        const messageBoxOverlay = document.getElementById('messageBoxOverlay');
+        const messageBox = document.getElementById('messageBox');
+        const messageBoxText = document.getElementById('messageBoxText');
+        const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+
+        // Hàm hiển thị hộp thoại thông báo tùy chỉnh
+        function showMessage(message, type = 'info', duration = 3000) {
+            messageBoxText.textContent = message;
+            messageBox.className = ''; // Reset classes
+            messageBox.classList.add(type); // Add type class for styling (success, error, info)
+            messageBoxOverlay.classList.add('show');
+
+            // Tự động ẩn sau duration
+            setTimeout(() => {
+                messageBoxOverlay.classList.remove('show');
+            }, duration);
+        }
+
+        // Đóng hộp thoại khi click nút Đóng
+        messageBoxCloseButton.addEventListener('click', () => {
+            messageBoxOverlay.classList.remove('show');
+        });
+
+        // --- Logic cho Tabs ---
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+
+                // Remove active class from all buttons and content
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked button and its content
+                button.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        // --- Logic cho Modal Đăng ký Kênh ---
+        function checkSubscriptionStatusAndShowModal() {
+            // Luôn hiển thị modal
+            subscriptionModalOverlay.classList.remove('hidden');
+            mainDashboardWrapper.style.display = 'none'; // Ẩn dashboard
+            // Nút "Tiếp tục vào bảng điều khiển" được kích hoạt ngay lập tức
+            modalUnlockButton.disabled = false; 
+            modalUnlockButton.textContent = 'Tiếp tục vào bảng điều khiển'; // Đặt lại text cho nút
+            logsContainer.innerHTML = '<div class="log-entry info">Chào mừng bạn! Vui lòng nhấn "Tiếp tục vào bảng điều khiển" hoặc ủng hộ nhà phát triển qua kênh YouTube.</div>';
+        }
+
+        modalYoutubeLink.addEventListener('click', function() {
+            console.log('Nút Ghé thăm kênh YouTube đã được click.');
+            showMessage('Cảm ơn bạn đã ghé thăm kênh YouTube! Bạn có thể nhấn "Tiếp tục vào bảng điều khiển".', 'info', 3000);
+            // Nút đã được kích hoạt ngay từ đầu, không cần logic kích hoạt sau delay nữa
+        });
+
+        modalUnlockButton.addEventListener('click', function() {
+            if (!modalUnlockButton.disabled) {
+                showMessage('Đang vào bảng điều khiển. Bot sẽ khởi động sau.', 'success');
+                subscriptionModalOverlay.classList.add('hidden'); // Ẩn modal
+                mainDashboardWrapper.style.display = 'flex'; // Hiển thị dashboard
+                // Gửi lệnh khởi động bot
+                sendCommand('start'); 
+                logsContainer.innerHTML = '<div class="log-entry info">Đã vào bảng điều khiển. Bot đang khởi động...</div>';
+                console.log('Đã mở khóa bot.');
+            }
+        });
+        // --- End Logic cho Modal Đăng ký Kênh ---
+
+        function formatUptime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${h}h ${m}m ${s}s`;
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch(`${BASE_URL}/status`);
+                const data = await response.json();
+
+                statusElements.botUsername.textContent = data.username;
+                statusElements.botHealth.textContent = `${data.health} / 20`;
+                statusElements.botFood.textContent = `${data.food} / 20`;
+                statusElements.botPosition.textContent = `X: ${data.position.x} Y: ${data.position.y} Z: ${data.position.z}`;
+                statusElements.botPlayers.textContent = data.players;
+                statusElements.botUptime.textContent = formatUptime(data.uptime);
+
+                if (data.online) {
+                    botStatusSpan.textContent = 'Online';
+                    botStatusSpan.className = 'status-online';
+                    startButton.disabled = true;
+                    reconnectButton.disabled = false;
+                    stopButton.disabled = false;
+                    chatInput.disabled = false;
+                    sendChatButton.disabled = false;
+                } else {
+                    botStatusSpan.textContent = data.statusMessage || 'Offline';
+                    botStatusSpan.className = 'status-offline';
+                    
+                    // Nút Start chỉ được kích hoạt nếu modal đã ẩn (người dùng đã nhấn tiếp tục)
+                    startButton.disabled = subscriptionModalOverlay.classList.contains('hidden') ? false : true; 
+                    reconnectButton.disabled = true;
+                    stopButton.disabled = true;
+                    chatInput.disabled = true;
+                    sendChatButton.disabled = true;
+                }
+            } catch (error) {
+                console.error('Lỗi khi cập nhật trạng thái:', error);
+                botStatusSpan.textContent = 'Lỗi kết nối';
+                botStatusSpan.className = 'status-offline';
+                
+                startButton.disabled = subscriptionModalOverlay.classList.contains('hidden') ? false : true; 
+                reconnectButton.disabled = true;
+                stopButton.disabled = true;
+                chatInput.disabled = true;
+                sendChatButton.disabled = true;
+            }
+        }
+
+        async function sendCommand(action) {
+            try {
+                const response = await fetch(`${BASE_URL}/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                const data = await response.json();
+                console.log(`Lệnh "${action}" phản hồi:`, data.message);
+                showMessage(data.message, data.success ? 'success' : 'error');
+                setTimeout(updateStatus, 1000); 
+            } catch (error) {
+                console.error(`Lỗi khi gửi lệnh "${action}":`, error);
+                showMessage(`Lỗi khi gửi lệnh "${action}": ${error.message}`, 'error');
+            }
+        }
+
+        async function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) {
+                showMessage('Tin nhắn không được để trống.', 'warn');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                console.log(`Tin nhắn gửi phản hồi:`, data.message);
+                showMessage(data.message, data.success ? 'success' : 'error');
+                if (data.success) {
+                    chatInput.value = '';
+                }
+            } catch (error) {
+                console.error('Lỗi khi gửi tin nhắn chat:', error);
+                showMessage(`Lỗi khi gửi tin nhắn chat: ${error.message}`, 'error');
+            }
+        }
+
+        startButton.addEventListener('click', () => sendCommand('start'));
+        reconnectButton.addEventListener('click', () => sendCommand('reconnect'));
+        stopButton.addEventListener('click', () => sendCommand('stop'));
+        sendChatButton.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch(`${BASE_URL}/logs`);
+                const logs = await response.json();
+                logsContainer.innerHTML = '';
+                logs.forEach(log => {
+                    const logEntry = document.createElement('div');
+                    logEntry.className = `log-entry ${log.level.toLowerCase()}`;
+                    logEntry.textContent = `[${log.timestamp}] ${log.emoji} ${log.level.toUpperCase()}: ${log.message}`;
+                    logsContainer.appendChild(logEntry);
+                });
+                logsContainer.scrollTop = logsContainer.scrollHeight;
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+                const errorLog = document.createElement('div');
+                errorLog.className = 'log-entry error';
+                errorLog.textContent = `[${new Date().toISOString()}] ❌ ERROR: Lỗi khi tải nhật ký: ${error.message}`;
+                logsContainer.appendChild(errorLog);
+            }
+        }
+
+        // Initial checks and updates
+        checkSubscriptionStatusAndShowModal(); // Gọi hàm này khi tải trang để luôn hiển thị modal
+        updateStatus();
+        fetchLogs();
+
+        // Set intervals for continuous updates
+        setInterval(updateStatus, 1000); // Cập nhật trạng thái mỗi 1 giây
+        setInterval(fetchLogs, 2000);
+    </script>
+</body>
+</html>

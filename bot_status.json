@@ -1,0 +1,26 @@
+{
+  "username": "minhbot1-zc8l",
+  "lastKick": {
+    "timestamp": "2026-01-22T17:21:05.295Z",
+    "server": "minhsaygex.progamer.me",
+    "username": "minhbot1-zc8l",
+    "reason": "{\"type\":\"string\",\"value\":\"Server closed\"}"
+  },
+  "names": [
+    {
+      "name": "thinhdz",
+      "status": "active",
+      "lastUpdated": "2025-07-07T10:17:55.672Z"
+    },
+    {
+      "name": "thinhdz_bot_afk",
+      "status": "active",
+      "lastUpdated": "2025-07-07T12:18:11.292Z"
+    },
+    {
+      "name": "kayawa_natsuky",
+      "status": "active",
+      "lastUpdated": "2025-07-11T09:42:20.288Z"
+    }
+  ]
+}

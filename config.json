@@ -1,0 +1,58 @@
+{
+  "server": {
+    "host": "minhsaygex.progamer.me",
+    "port": 30805,
+    "version": "1.20.4",
+    "auth": "offline"
+  },
+  "bot": {
+    "baseUsername": "minhbot1"
+  },
+  "features": {
+    "autoReconnect": {
+      "enabled": true,
+      "delay": 50000,
+      "kickDelay": 10000
+    },
+    "randomUsernameOnKick": {
+      "enabled": true,
+      "length": 4
+    },
+    "antiAfk": {
+      "enabled": true,
+      "minInterval": 5000,
+      "maxInterval": 15000,
+      "actions": {
+        "jump": true,
+        "sneak": true,
+        "lookAround": true,
+        "swingArm": true,
+        "walkRandomly": true,
+        "sprintForward": true,
+        "toggleWalk": true,
+        "mineBlockRandomly": false,
+        "placeBlockRandomly": true,
+        "useItem": false,
+        "switchHotbar": true,
+        "dropItem": false,
+        "interactWithEntity": true,
+        "openContainer": false,
+        "inventoryInteraction": true, 
+        "randomSequence": true
+      }
+    },
+    "autoChat": {
+      "enabled": true,
+      "interval": 60000,
+      "messages": [
+        "Hello!",
+        "This is an AFK bot.",
+        "I'm currently AFK."
+      ]
+    },
+    "webDashboard": {
+      "enabled": true,
+      "port": 3000
+    }
+  }
+}
